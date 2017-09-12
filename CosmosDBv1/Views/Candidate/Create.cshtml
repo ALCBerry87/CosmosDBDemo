@@ -1,0 +1,51 @@
+@model CosmosDBv1.Models.Candidate
+
+<h2>Create Candidate</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Candidate</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @Html.HiddenFor(m => m.Campus)
+        <div class="form-group">
+            <label asp-for="FirstName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="LastName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    <input asp-for="IsFullTime" />
+                    <label asp-for="IsFullTime"></label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="GraduationDate" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="GraduationDate" class="form-control" />
+                <span asp-validation-for="GraduationDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

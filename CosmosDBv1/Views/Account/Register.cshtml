@@ -1,6 +1,17 @@
-﻿@model RegisterViewModel
+﻿@using CosmosDBv1.Enumerations;
+
+@model RegisterViewModel
 @{
     ViewData["Title"] = "Register";
+    var campusItems = new List<SelectListItem>();
+    foreach(var c in Enum.GetValues(typeof(Enumerations.Campuses)))
+    {
+        campusItems.Add(new SelectListItem()
+        {
+            Value = c.ToString(),
+            Text = Enum.GetName(typeof(Enumerations.Campuses), c)
+        });
+    }
 }
 
 <h2>@ViewData["Title"].</h2>
@@ -14,6 +25,13 @@
         <div class="col-md-10">
             <input asp-for="Email" class="form-control" />
             <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Campus" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="Campus" asp-items="@campusItems" class="form-control"></select>
+            <span asp-validation-for="Campus" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">

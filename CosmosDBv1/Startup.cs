@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using CosmosDBv1.Data;
 using CosmosDBv1.Models;
 using CosmosDBv1.Services;
+using Newtonsoft.Json.Serialization;
 
 namespace CosmosDBv1
 {
@@ -31,7 +32,8 @@ namespace CosmosDBv1
             }
 
             builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
+            //Configuration = builder.Build();
+            Configuration = AppConfig.Bootstrap(builder);
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -47,7 +49,12 @@ namespace CosmosDBv1
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
+
+            IoCStartup.Bootstrap(services);
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
