@@ -23,18 +23,78 @@
             </div>
         </div>
         <div class="form-group">
+            <label asp-for="ContactInfo.Email" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ContactInfo.Email" class="form-control" type="email" />
+                <span asp-validation-for="ContactInfo.Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ContactInfo.Phone" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ContactInfo.Phone" class="form-control" type="tel" />
+                <span asp-validation-for="ContactInfo.Phone" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="IsFullTime" class="col-md-2 control-label"></label>
             <div class="col-md-offset-2 col-md-10">
                 <div class="checkbox">
                     <input asp-for="IsFullTime" />
-                    <label asp-for="IsFullTime"></label>
                 </div>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="GraduationDate" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="GraduationDate" class="form-control" />
+                <input asp-for="GraduationDate" class="form-control" type="date" value="" />
                 <span asp-validation-for="GraduationDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Majors" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select multiple asp-for="Majors" class="chosen-select" data-placeholder="Select Majors...">
+                    <option>Computer Science</option>
+                    <option>MIS</option>
+                    <option>Mathematics</option>
+                    <option>Mechanical Engineering</option>
+                    <option>Electrical Engineering</option>
+                    <option>Business Administration</option>
+                    <option>Spanish</option>
+                    <option>Music</option>
+                </select>
+                <span asp-validation-for="Majors" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Minors" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select multiple asp-for="Minors" class="chosen-select" data-placeholder="Select Minors...">
+                    <option>Computer Science</option>
+                    <option>MIS</option>
+                    <option>Mathematics</option>
+                    <option>Mechanical Engineering</option>
+                    <option>Electrical Engineering</option>
+                    <option>Business Administration</option>
+                    <option>Spanish</option>
+                    <option>Music</option>
+                </select>
+                <span asp-validation-for="Minors" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="GPA.Cumulative" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="GPA.Cumulative" class="form-control" />
+                <span asp-validation-for="GPA.Cumulative" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="GPA.Current" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="GPA.Current" class="form-control" />
+                <span asp-validation-for="GPA.Current" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
@@ -48,4 +108,11 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".chosen-select").chosen({
+            width: "50%"
+        });
+    });
+</script>

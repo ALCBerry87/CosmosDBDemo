@@ -59,7 +59,7 @@ namespace CosmosDBv1.Repository
                     doc
                 );
 
-            return (T)(dynamic)newDoc;
+            return (T)(dynamic)newDoc.Resource;
         }
 
         //Update
@@ -71,7 +71,7 @@ namespace CosmosDBv1.Repository
                     doc
                 );
 
-            return (T)(dynamic)updatedDoc;
+            return (T)(dynamic)updatedDoc.Resource;
         }
 
         public async Task<T> UpsertAsync(T doc)
@@ -82,7 +82,7 @@ namespace CosmosDBv1.Repository
                         doc
                     );
 
-            return (T)(dynamic)upsertedDoc;
+            return (T)(dynamic)upsertedDoc.Resource;
         }
 
         //Delete
@@ -93,7 +93,7 @@ namespace CosmosDBv1.Repository
                     UriFactory.CreateDocumentUri(AppConfig.CosmosDbDatabaseName, AppConfig.CosmosDbCollectionName, doc.Id)
                 );
 
-            return (T)(dynamic)deletedDoc;
+            return (T)(dynamic)deletedDoc.Resource;
         }
     }
 }

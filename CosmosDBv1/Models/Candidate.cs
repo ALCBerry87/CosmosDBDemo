@@ -10,6 +10,13 @@ namespace CosmosDBv1.Models
 {
     public class Candidate : IDocument
     {
+        public Candidate()
+        {
+            Majors = new List<string>();
+            Minors = new List<string>();
+            Notes = new List<CandidateNotes>();
+        }
+
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
