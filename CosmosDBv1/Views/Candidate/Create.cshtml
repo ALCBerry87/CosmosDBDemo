@@ -2,30 +2,29 @@
 
 <h2>Create Candidate</h2>
 
-<form asp-action="Create">
+<form id="CreateForm" asp-action="Create">
     <div class="form-horizontal">
-        <h4>Candidate</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         @Html.HiddenFor(m => m.Campus)
         <div class="form-group">
             <label asp-for="FirstName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="FirstName" class="form-control" />
+                <input asp-for="FirstName" required class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="LastName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="LastName" class="form-control" />
+                <input asp-for="LastName" required class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="ContactInfo.Email" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="ContactInfo.Email" class="form-control" type="email" />
+                <input asp-for="ContactInfo.Email" required class="form-control" type="email" />
                 <span asp-validation-for="ContactInfo.Email" class="text-danger"></span>
             </div>
         </div>
@@ -38,16 +37,16 @@
         </div>
         <div class="form-group">
             <label asp-for="IsFullTime" class="col-md-2 control-label"></label>
-            <div class="col-md-offset-2 col-md-10">
+            <div class="col-md-4" style="margin-left: 20px;">
                 <div class="checkbox">
-                    <input asp-for="IsFullTime" />
+                    <input id="IsFullTime" asp-for="IsFullTime" />
                 </div>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="GraduationDate" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="GraduationDate" class="form-control" type="date" value="" />
+                <input id="GraduationDate" asp-for="GraduationDate" class="form-control" value="" />
                 <span asp-validation-for="GraduationDate" class="text-danger"></span>
             </div>
         </div>
@@ -98,6 +97,16 @@
             </div>
         </div>
         <div class="form-group">
+            <label asp-for="Notes" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <div id="CommentsGrid">
+                </div>
+                <div style="margin-top: 10px;">
+                    <a id="addrow" href="#"><i class="fa fa-plus-circle" style="margin-right: 3px;"></i>Add row</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group" style="margin-top: 40px;">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
@@ -114,5 +123,96 @@
         $(".chosen-select").chosen({
             width: "50%"
         });
+
+        $("#GraduationDate").kendoDatePicker();
+
+        var commentsGrid = $("#CommentsGrid").data("kendoGrid");
+        if (!commentsGrid) {
+            commentsGrid = $("#CommentsGrid").kendoGrid({
+                gridId: "Comments",
+                sortable: false,
+                filterable: false,
+                editable: {
+                    createAt: "bottom"
+                },
+                navigatable: true,
+                resizeable: true,
+                scrollable: false,
+                columns: [
+                    {
+                        field: "Note", title: "Notes", width: "60%"
+                    },
+                    {
+                        field: "Source", title: "Source", width: "20%"
+                    },
+                    {
+                        field: "Date", title: "Date", width: "15%",
+                        template: function (dataItem) {
+                            if (dataItem.Date > '') {
+                                return kendo.toString(kendo.parseDate(dataItem.Date), 'MM/dd/yyyy');
+                            }
+
+                            return '';
+                        },
+                        editor: function (container, options) {
+                            $('<input data-text-field="Date" data-value-field="Date" data-bind="value:' + options.field + '"/>')
+                                .appendTo(container).kendoDatePicker();
+                        }
+                    },
+                    {
+                        field: "", title: "", width: "5%",
+                        template: function (dataItem) {
+                            return "<center><a class=\"removerow\" href=\"javascript:\"><i class=\"fa fa-lg fa-trash-o\"></i></a></center>";
+                        }
+                    }
+                ],
+                dataSource: new kendo.data.DataSource({
+                    schema: {
+                        model: {
+                            fields: {
+                                Note: {
+                                    editable: true
+                                },
+                                Source: {
+                                    editable: true
+                                },
+                                Date: {
+                                    editable: true
+                                }
+                            }
+                        }
+                    }
+                })
+            }).data("kendoGrid");
+        }
+
+        $("#addrow").click(function (e) {
+            e.preventDefault();
+            var grid = $("#CommentsGrid").data("kendoGrid");
+            grid.addRow();
+        });
+
+        $("#CreateForm").submit(function (e) {
+            e.preventDefault();
+            var sf = unescape($("#CreateForm").serialize());
+            var candidate = sf.QueryStringToJSON();
+            candidate["Notes"] = $("#CommentsGrid").data("kendoGrid").dataSource.data().toJSON();
+            candidate["IsFullTime"] = $("#IsFullTime").is(":checked");
+            $.ajax({
+                cache: false,
+                async: true,
+                type: "POST",
+                url: "/Candidate/Create",
+                data: candidate,
+                success: function (response) {
+                    window.location = '/Candidate';
+                },
+                error: function () {
+                    alert("Error");
+                }
+            });
+        });
     });
+
+
 </script>

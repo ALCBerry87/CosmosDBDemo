@@ -20,25 +20,38 @@ namespace CosmosDBv1.Models
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
+        [JsonProperty(PropertyName = "type")]
+        public string Type
+        {
+            get
+            {
+                return "candidate";
+            }
+        }
+
         [Required]
         [JsonProperty(PropertyName = "campus")]
         public string Campus { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "firstName")]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "lastName")]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
         [JsonProperty(PropertyName = "contact")]
         public CandidateContactInfo ContactInfo { get; set; }
 
         [JsonProperty(PropertyName = "isFullTime")]
+        [Display(Name = "Full Time?")]
         public bool IsFullTime { get; set; }
 
         [JsonProperty(PropertyName = "graduationDate")]
+        [Display(Name = "Graduation Date")]
         public DateTime GraduationDate { get; set; }
 
         [JsonProperty(PropertyName = "majors")]

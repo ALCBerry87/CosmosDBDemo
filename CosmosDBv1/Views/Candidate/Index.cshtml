@@ -1,68 +1,124 @@
-@model CosmosDBv1.Models.Candidate
+@using Newtonsoft.Json;
+@model List<CosmosDBv1.Models.Candidate>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
-
-<form asp-action="Index">
-    <div class="form-horizontal">
-        <h4>Candidate</h4>
-        <hr />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="Id" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Campus" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Campus" class="form-control" />
-                <span asp-validation-for="Campus" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="FirstName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="LastName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="IsFullTime" />
-                    <label asp-for="IsFullTime"></label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="GraduationDate" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="GraduationDate" class="form-control" />
-                <span asp-validation-for="GraduationDate" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
+<h2>Candidates</h2>
+<div id="CandidatesContainer">
+    <a href="/Candidate/Create" style="display: block; margin-top: 20px; margin-bottom: 5px;"><span class="fa fa-plus-circle"></span> Add Candidate</a>
+    <div id="CandidatesGrid">
     </div>
-</form>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
+<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var candidatesDataSource = new kendo.data.DataSource({
+            data: @Html.Raw(JsonConvert.SerializeObject(Model))
+        });
+        candidatesDataSource.fetch(function () {
+            var grid = $("#CandidatesGrid").data("kendoGrid");
+            if (!grid) {
+                grid = $("#CandidatesGrid").kendoGrid({
+                    gridId: "Candidates",
+                    sortable: true,
+                    filterable: false,
+                    editable: false,
+                    navigatable: true,
+                    resizeable: true,
+                    scrollable: true,
+                    pageable: {
+                        pageSize: 25,
+                        pageSizes: [10, 25, 50, 100, 500]
+                    },
+                    columns: [
+                        {
+                            field: "", title: "", width: "4%",
+                            template: function(dataItem) {
+                                return "<a href='/Candidate/Edit/" + dataItem.id + "'>view</a>";
+                            }
+                        },
+                        {
+                            field: "firstName", title: "First Name", width: "7%"
+                        },
+                        {
+                            field: "lastName", title: "Last Name", width: "7%"
+                        },
+                        {
+                            field: "email", title: "Email", width: "10%",
+                            template: function (dataItem) {
+                                if (dataItem.contact && dataItem.contact.email) {
+                                    return dataItem.contact.email;
+                                }
 
+                                return '';
+                            }
+                        },
+                        {
+                            field: "phone", title: "Phone", width: "10%",
+                            template: function (dataItem) {
+                                if (dataItem.contact && dataItem.contact.phone) {
+                                    return dataItem.contact.phone;
+                                }
+
+                                return '';
+                            }
+                        },
+                        {
+                            field: "isFullTime", title: "FT/I", width: "4%",
+                            template: function (dataItem) {
+                                if (dataItem.isFullTime) {
+                                    return 'FT';
+                                }
+                                return 'I';
+                            }
+                        },
+                        {
+                            field: "graduationDate", title: "Grad. Date", width: "8%",
+                            template: function (dataItem) {
+                                if (dataItem.graduationDate) {
+                                    return kendo.toString(kendo.parseDate(dataItem.graduationDate), "MM/dd/yyyy");
+                                }
+
+                                return '';
+                            }
+                        },
+                        {
+                            field: "majors", title: "Major(s)", width: "15%",
+                            template: function (dataItem) {
+                                if (dataItem.majors && dataItem.majors.length > 0) {
+                                    return dataItem.majors.join("; ");
+                                }
+
+                                return "";
+                            }
+                        },
+                        {
+                            field: "minors", title: "Minor(s)", width: "15%",
+                            template: function (dataItem) {
+                                if (dataItem.minors && dataItem.minors.length > 0) {
+                                    return dataItem.minors.join("; ");
+                                }
+
+                                return "";
+                            }
+                        },
+                        {
+                            field: "gpa", title: "GPA", width: "5%",
+                            template: function (dataItem) {
+                                if (dataItem.gpa && dataItem.gpa.cumulative) {
+                                    return dataItem.gpa.cumulative;
+                                } 
+
+                                return "";
+                            }
+                        }
+                    ],
+                    dataSource: candidatesDataSource
+                }).data("kendoGrid");
+            }
+        });
+
+    });
+</script>

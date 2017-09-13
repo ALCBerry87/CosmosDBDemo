@@ -1,0 +1,231 @@
+﻿@using Newtonsoft.Json;
+@model CosmosDBv1.Models.Candidate
+
+<h2>Edit Candidate</h2>
+
+<form id="EditForm" asp-action="Edit">
+    <div class="form-horizontal">
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @Html.HiddenFor(m => m.Campus)
+        @Html.HiddenFor(m => m.Id, htmlAttributes: new { @id = "CandidateId" })
+        <div class="form-group">
+            <label asp-for="FirstName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="FirstName" required class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="LastName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="LastName" required class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ContactInfo.Email" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ContactInfo.Email" required class="form-control" type="email" />
+                <span asp-validation-for="ContactInfo.Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ContactInfo.Phone" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ContactInfo.Phone" class="form-control" type="tel" />
+                <span asp-validation-for="ContactInfo.Phone" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="IsFullTime" class="col-md-2 control-label"></label>
+            <div class="col-md-4" style="margin-left: 20px;">
+                <div class="checkbox">
+                    <input id="IsFullTime" asp-for="IsFullTime" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="GraduationDate" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input id="GraduationDate" asp-for="GraduationDate" class="form-control" value="@(Model.GraduationDate > DateTime.MinValue ? Model.GraduationDate.ToString("MM/dd/yyyy") : "")" />
+                <span asp-validation-for="GraduationDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Majors" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select multiple asp-for="Majors" class="chosen-select" data-placeholder="Select Majors...">
+                    <option>Computer Science</option>
+                    <option>MIS</option>
+                    <option>Mathematics</option>
+                    <option>Mechanical Engineering</option>
+                    <option>Electrical Engineering</option>
+                    <option>Business Administration</option>
+                    <option>Spanish</option>
+                    <option>Music</option>
+                </select>
+                <span asp-validation-for="Majors" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Minors" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select multiple asp-for="Minors" class="chosen-select" data-placeholder="Select Minors...">
+                    <option>Computer Science</option>
+                    <option>MIS</option>
+                    <option>Mathematics</option>
+                    <option>Mechanical Engineering</option>
+                    <option>Electrical Engineering</option>
+                    <option>Business Administration</option>
+                    <option>Spanish</option>
+                    <option>Music</option>
+                </select>
+                <span asp-validation-for="Minors" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="GPA.Cumulative" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="GPA.Cumulative" class="form-control" />
+                <span asp-validation-for="GPA.Cumulative" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="GPA.Current" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="GPA.Current" class="form-control" />
+                <span asp-validation-for="GPA.Current" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Notes" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <div id="CommentsGrid">
+                </div>
+                <div style="margin-top: 10px;">
+                    <a id="addrow" href="#"><i class="fa fa-plus-circle" style="margin-right: 3px;"></i>Add row</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group" style="margin-top: 40px;">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a id="DeleteCandidate" href="#" class="btn btn-default" style="margin-left: 10px;">Delete</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".chosen-select").chosen({
+            width: "50%"
+        });
+
+        $("#GraduationDate").kendoDatePicker();
+
+        $("#DeleteCandidate").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                cache: false,
+                async: true,
+                type: "POST",
+                url: "/Candidate/Delete",
+                data: { id: $("#CandidateId").val() },
+                success: function (response) {
+                    window.location = '/Candidate';
+                },
+                error: function () {
+                    alert("Error");
+                }
+            })
+        });
+
+        var commentsDataSource = new kendo.data.DataSource({
+            data: @Html.Raw(JsonConvert.SerializeObject(Model.Notes))
+        });
+
+        commentsDataSource.fetch(function () {
+            var commentsGrid = $("#CommentsGrid").data("kendoGrid");
+            if (!commentsGrid) {
+                commentsGrid = $("#CommentsGrid").kendoGrid({
+                    gridId: "Comments",
+                    sortable: false,
+                    filterable: false,
+                    editable: {
+                        createAt: "bottom"
+                    },
+                    navigatable: true,
+                    resizeable: true,
+                    scrollable: false,
+                    columns: [
+                        {
+                            field: "note", title: "Notes", width: "60%"
+                        },
+                        {
+                            field: "source", title: "Source", width: "20%"
+                        },
+                        {
+                            field: "date", title: "Date", width: "15%",
+                            template: function (dataItem) {
+                                if (dataItem.date > '') {
+                                    return kendo.toString(kendo.parseDate(dataItem.date), 'MM/dd/yyyy');
+                                }
+
+                                return '';
+                            },
+                            editor: function (container, options) {
+                                $('<input data-text-field="date" data-value-field="date" data-bind="value:' + options.field + '"/>')
+                                    .appendTo(container).kendoDatePicker();
+                            }
+                        },
+                        {
+                            field: "", title: "", width: "5%",
+                            template: function (dataItem) {
+                                return "<center><a class=\"removerow\" href=\"javascript:\"><i class=\"fa fa-lg fa-trash-o\"></i></a></center>";
+                            }
+                        }
+                    ],
+                    dataSource: commentsDataSource
+                }).data("kendoGrid");
+            }
+
+        });
+
+        
+
+        $("#addrow").click(function (e) {
+            e.preventDefault();
+            var grid = $("#CommentsGrid").data("kendoGrid");
+            grid.addRow();
+        });
+
+        $("#EditForm").submit(function (e) {
+            e.preventDefault();
+            var sf = unescape($("#EditForm").serialize());
+            var candidate = sf.QueryStringToJSON();
+            candidate["Notes"] = JSON.parse(unescape(JSON.stringify($("#CommentsGrid").data("kendoGrid").dataSource.data().toJSON())));
+            candidate["IsFullTime"] = $("#IsFullTime").is(":checked");
+            $.ajax({
+                cache: false,
+                async: true,
+                type: "POST",
+                url: "/Candidate/Edit",
+                data: candidate,
+                success: function (response) {
+                    window.location = '/Candidate';
+                },
+                error: function () {
+                    alert("Error");
+                }
+            });
+        });
+    });
+
+
+</script>

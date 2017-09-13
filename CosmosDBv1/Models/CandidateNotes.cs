@@ -12,6 +12,18 @@ namespace CosmosDBv1.Models
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
+        [JsonProperty(PropertyName = "campus")]
+        public string Campus { get; set; }
+
+        [JsonProperty(PropertyName = "type")]
+        public string Type
+        {
+            get
+            {
+                return "notes";
+            }
+        }
+
         [JsonProperty(PropertyName = "candidateId")]
         public string CandidateId { get; set; }
 

@@ -22,9 +22,11 @@ namespace CosmosDBv1.Controllers
             _claimSvc = claimSvc;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var campus = _claimSvc.GetUserCampus(HttpContext);
+            var candidates = await _candidateSvc.GetForCampus(campus);
+            return View(candidates);
         }
 
         [HttpGet]
@@ -41,17 +43,27 @@ namespace CosmosDBv1.Controllers
             return RedirectToAction("Index");
         }
 
-        //[HttpGet]
-        //public IActionResult Detail()
-        //{
-        //    //var vm = new CandidateViewModel();
-        //    //return View(vm);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var campus = _claimSvc.GetUserCampus(HttpContext);
+            var candidate = await _candidateSvc.GetById(id, campus);
+            return View(candidate);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Detail(Candidate candidate)
+        public async Task<IActionResult> Edit(Candidate candidate)
         {
+            await _candidateSvc.UpdateCandidate(candidate);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var candidate = await _candidateSvc.GetById(id, _claimSvc.GetUserCampus(HttpContext));
+            await _candidateSvc.DeleteCandidate(candidate);
             return RedirectToAction("Index");
         }
     }

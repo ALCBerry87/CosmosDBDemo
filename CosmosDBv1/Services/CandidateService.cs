@@ -19,17 +19,17 @@ namespace CosmosDBv1.Services
         }
 
         //Read
-        public async Task<Candidate> GetById(string id)
+        public async Task<Candidate> GetById(string id, string campus)
         {
-            var candidate = await _candidateRepo.GetByIdAsync(id);
-            candidate.Notes = await _candidateNotesRepo.GetItemsAsync(doc => doc.CandidateId == id, candidate.Campus);
+            var candidate = await _candidateRepo.GetByIdAsync(id, campus);
+            candidate.Notes = await _candidateNotesRepo.GetItemsAsync(doc => doc.CandidateId == id, campus);
 
             return candidate;
         }
 
         public async Task<List<Candidate>> GetForCampus(string campus)
         {
-            return await _candidateRepo.GetItemsAsync(doc => doc.Campus == campus, campus);
+            return await _candidateRepo.GetItemsAsync(doc => doc.Type == "candidate", campus);
         }
 
         //Create
@@ -41,6 +41,7 @@ namespace CosmosDBv1.Services
             foreach(var note in candidate.Notes)
             {
                 note.CandidateId = newCandidate.Id;
+                note.Campus = newCandidate.Campus;
                 noteTasks.Add(_candidateNotesRepo.CreateAsync(note));
             }
 
@@ -54,6 +55,8 @@ namespace CosmosDBv1.Services
             var noteTasks = new List<Task>();
             foreach (var note in candidate.Notes)
             {
+                note.Campus = candidate.Campus;
+                note.CandidateId = candidate.Id;
                 noteTasks.Add(_candidateNotesRepo.UpsertAsync(note));
             }
 
@@ -66,11 +69,11 @@ namespace CosmosDBv1.Services
             var noteTasks = new List<Task>();
             foreach (var note in candidate.Notes)
             {
-                noteTasks.Add(_candidateNotesRepo.DeleteAsync(note));
+                noteTasks.Add(_candidateNotesRepo.DeleteAsync(note, candidate.Campus));
             }
 
             await Task.WhenAll(noteTasks);
-            await _candidateRepo.DeleteAsync(candidate);
+            await _candidateRepo.DeleteAsync(candidate, candidate.Campus);
         }
     }
 }

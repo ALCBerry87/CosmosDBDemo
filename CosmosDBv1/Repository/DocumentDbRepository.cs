@@ -21,10 +21,14 @@ namespace CosmosDBv1.Repository
 
         //Read
 
-        public async Task<T> GetByIdAsync(string id)
+        public async Task<T> GetByIdAsync(string id, string pk)
         {
             var doc = await _client.ReadDocumentAsync<T>(
-                    UriFactory.CreateDocumentUri(AppConfig.CosmosDbDatabaseName, AppConfig.CosmosDbCollectionName, id)
+                    UriFactory.CreateDocumentUri(AppConfig.CosmosDbDatabaseName, AppConfig.CosmosDbCollectionName, id),
+                    new RequestOptions()
+                    {
+                        PartitionKey = new PartitionKey(pk)
+                    }
                 );
 
             return doc.Document;
@@ -86,11 +90,15 @@ namespace CosmosDBv1.Repository
         }
 
         //Delete
-        public async Task<T> DeleteAsync(T doc)
+        public async Task<T> DeleteAsync(T doc, string pk)
         {
             var deletedDoc = 
                 await _client.DeleteDocumentAsync(
-                    UriFactory.CreateDocumentUri(AppConfig.CosmosDbDatabaseName, AppConfig.CosmosDbCollectionName, doc.Id)
+                    UriFactory.CreateDocumentUri(AppConfig.CosmosDbDatabaseName, AppConfig.CosmosDbCollectionName, doc.Id),
+                    new RequestOptions()
+                    {
+                        PartitionKey = new PartitionKey(pk)
+                    }
                 );
 
             return (T)(dynamic)deletedDoc.Resource;
