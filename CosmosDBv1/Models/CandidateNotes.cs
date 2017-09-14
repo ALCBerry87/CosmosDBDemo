@@ -7,26 +7,8 @@ using System.Threading.Tasks;
 
 namespace CosmosDBv1.Models
 {
-    public class CandidateNotes : IDocument
+    public class CandidateNotes
     {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
-
-        [JsonProperty(PropertyName = "campus")]
-        public string Campus { get; set; }
-
-        [JsonProperty(PropertyName = "type")]
-        public string Type
-        {
-            get
-            {
-                return "notes";
-            }
-        }
-
-        [JsonProperty(PropertyName = "candidateId")]
-        public string CandidateId { get; set; }
-
         [JsonProperty(PropertyName = "note")]
         public string Note { get; set; }
 
@@ -35,6 +17,5 @@ namespace CosmosDBv1.Models
 
         [JsonProperty(PropertyName = "date")]
         public DateTime Date { get; set; }
-
     }
 }

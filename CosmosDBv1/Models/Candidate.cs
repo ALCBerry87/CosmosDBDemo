@@ -63,7 +63,7 @@ namespace CosmosDBv1.Models
         [JsonProperty(PropertyName = "gpa")]
         public CandidateGpa GPA { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty(PropertyName = "notes")]
         public List<CandidateNotes> Notes { get; set; }
     }
 }

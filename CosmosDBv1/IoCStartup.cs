@@ -18,7 +18,6 @@ namespace CosmosDBv1
             services.AddScoped(typeof(ClaimService), typeof(ClaimService));
             services.AddSingleton(typeof(DocumentClient), s => new DocumentClient(new Uri(AppConfig.CosmosDbUri), AppConfig.CosmosDbAuthKey));
             services.AddScoped(typeof(DocumentDbRepository<Candidate>), typeof(DocumentDbRepository<Candidate>));
-            services.AddScoped(typeof(DocumentDbRepository<CandidateNotes>), typeof(DocumentDbRepository<CandidateNotes>));
             services.AddScoped(typeof(CandidateService), typeof(CandidateService));
         }
     }

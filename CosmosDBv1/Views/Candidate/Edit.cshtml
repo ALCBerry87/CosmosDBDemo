@@ -122,6 +122,17 @@
 </div>
 <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript">
+    var bindRemoveRow = function () {
+        $(".removerow").click(function (e) {
+            e.preventDefault();
+            var grid = $("#CommentsGrid").data("kendoGrid");
+            var dataitem = grid.dataItem($(this).closest("tr"));
+            grid.dataSource.remove(dataitem);
+            grid.dataSource.sync();
+            bindRemoveRow();
+        });
+    };
+
     $(document).ready(function () {
         $(".chosen-select").chosen({
             width: "50%"
@@ -205,12 +216,31 @@
             grid.addRow();
         });
 
+        bindRemoveRow();
+
         $("#EditForm").submit(function (e) {
             e.preventDefault();
-            var sf = unescape($("#EditForm").serialize());
-            var candidate = sf.QueryStringToJSON();
-            candidate["Notes"] = JSON.parse(unescape(JSON.stringify($("#CommentsGrid").data("kendoGrid").dataSource.data().toJSON())));
-            candidate["IsFullTime"] = $("#IsFullTime").is(":checked");
+            var candidate = {
+                id: $("#CandidateId").val(),
+                campus: $("#Campus").val(),
+                firstName: $("#FirstName").val(),
+                lastName: $("#LastName").val(),
+                contactInfo: {
+                    email: $("#ContactInfo_Email").val(),
+                    phone: $("#ContactInfo_Phone").val()
+                },
+                isFullTime: $("#IsFullTime").is(":checked"),
+                graduationDate: $("#GraduationDate").val(),
+                majors: $("#Majors").val(),
+                minors: $("#Minors").val(),
+                gpa: {
+                    cumulative: $("#GPA_Cumulative").val(),
+                    current: $("#GPA_Current").val()
+                },
+                notes: JSON.parse(JSON.stringify($("#CommentsGrid").data("kendoGrid").dataSource.data().toJSON())),
+                __RequestVerificationToken: $('#EditForm input[name="__RequestVerificationToken"]').val()
+            };
+
             $.ajax({
                 cache: false,
                 async: true,
